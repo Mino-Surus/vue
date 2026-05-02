@@ -2,18 +2,23 @@
 import { ref } from 'vue';
 
 const arrs = ref([
-  {id: 1, tt:'hello' },
-  {id: 2, tt:'bye' },
-  {id: 3, tt:'play' }
+  {id: 1, tt:'hello', done: false },
+  {id: 2, tt:'bye', done: false },
+  {id: 3, tt:'play', done: false }
 ])
 
 
 let deleteElement = (arr) => {
-  arrs.value = arrs.value.filter(a => a != arr)
+  arrs.value = arrs.value.filter(a => a.id != arr.id)
 }
 
-let addItem = (arr) => {
+const newItem = ref('') 
 
+let addItem = () => {
+  if (newItem.value !=='') {
+  arrs.value.push({id: arrs.value.length + 1, tt: newItem.value, done: false})
+  newItem.value = ''
+  }
 }
 
 
@@ -25,14 +30,15 @@ let addItem = (arr) => {
 
 <template>
   <ul>
-    <li v-for="arr in arrs" :key="id">
-        {{ arr.tt }}
-        <button v-on:submit.prevent="deleteElement(arr)"></button>
+    <li v-for="arr in arrs" :key="arr.id">
+      <input type="checkbox" v-model="arr.done">
+      <b :class="{ done: arr.done}">{{ arr.tt }}</b>
+        <button v-on:click="deleteElement(arr)"> удалить </button>
     </li>
   </ul>
-  <form>
-    <input v-model="arrs">
-    <button @click="addItem"> Добавить </button>
+  <form v-on:submit.prevent>
+    <input v-model="newItem">
+    <button v-on:click="addItem"> Добавить </button>
   </form>
 
 
@@ -40,5 +46,10 @@ let addItem = (arr) => {
 
 </template>
 
-<style scoped></style>
+<style scoped>
+.done {
+  text-decoration: line-through;
+  color: gray;
+}
+</style>
 
